@@ -10,7 +10,7 @@ from lorenz96 import Lorenz96
 
 # Set initial data for this model
 N_dim = 36   # How many dimentions
-F = 5        # Set the parameter of this model
+F = 9        # Set the parameter of this model
 t_end = 10
 dt = 0.01
 
@@ -40,7 +40,6 @@ if __name__ == "__main__":
     model = Lorenz96(N_dim=N_dim, F=F, init_x=x)
 
     x = model.Runge_Kutta_4(dt=dt, t_end=t_end)
-    print(x)
 
     # plot first three variables
     fig = plt.figure()

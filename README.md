@@ -1,4 +1,4 @@
-# Sokoban environment
+# Lorenz96 model implementation
 
 ## Overview
 I implemented Lorenz96 model with python.

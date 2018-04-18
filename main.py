@@ -10,7 +10,7 @@ from lorenz96 import Lorenz96
 
 # Set initial data for this model
 N_dim = 36   # How many dimentions
-F = 8        # Set the parameter of this model
+F = 9        # Set the parameter of this model
 t_end = 10
 dt = 0.01
 
@@ -52,7 +52,7 @@ if __name__ == "__main__":
     ax.set_zlabel('$x_3$')
 
     if args.Save:
-        filename = "F_"+str(F)+".png"
+        filename = "Lorenz_F_"+str(F)+".png"
         plt.savefig(filename)
 
     plt.show()

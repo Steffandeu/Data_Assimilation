@@ -4,7 +4,7 @@ import numpy as np
 
 # these are our constants
 N = 36  # number of variables
-F = 8  # forcing
+F = 5  # forcing
 
 def Lorenz96(x,t):
 
@@ -34,7 +34,7 @@ print(x)
 from mpl_toolkits.mplot3d import Axes3D
 fig = plt.figure()
 ax = fig.gca(projection='3d')
-ax.plot(x[:,0],x[:,1],x[:,3])
+ax.plot(x[:,0],x[:,1],x[:,2])
 ax.set_xlabel('$x_1$')
 ax.set_ylabel('$x_2$')
 ax.set_zlabel('$x_3$')

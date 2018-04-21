@@ -4,8 +4,8 @@
 I implemented Lorenz96 model with python.
 
 ## Image
-![look8](1/Lorenz_F_8.png)
-![look9](1/Lorenz_F_9.png)
+![look8](1_plot_model/Lorenz_F_8.png)
+![look9](1_plot_model/Lorenz_F_9.png)
 
 ## Requirement
 This module needs `matplotlib` and `numpy`.

@@ -12,7 +12,7 @@ one_year = 365 * one_day
 total_t = int(date * one_day)
 hour_6 = one_day/4
 
-dt = 0.01
+dt = 0.005
 N_dim = 40
 F = 8
 t_end = 10
@@ -21,7 +21,7 @@ x[N_dim-1] += 0.01
 
 model = Lorenz96(N_dim=N_dim, F=F, init_x=x)
 
-new_dir_path = "saved_data"
+new_dir_path = "save_data"
 
 if __name__ == '__main__':
 

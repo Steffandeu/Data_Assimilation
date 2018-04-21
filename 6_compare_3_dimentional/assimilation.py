@@ -12,9 +12,14 @@ class Kalman(object):
         self.init_true, self.init_noise = self.load_data(0)
         self.model = Lorenz96(N_dim=self.N, F=8, init_x=self.init_true)
 
+        self.Q = np.ones([self.N, self.N])
+        self.R = np.ones([self.N, self.N])
+
         # make data set
         ## self.true_set : system trandition
         ## self.obs_set : observation data
+        ## self.matrix_set : system trandition matrix
+        ## self.noise_set : system noise
         data = self.load_data(0)
         self.true_set = np.array([data[0]])
         self.obs_set = np.array([data[1]])
@@ -51,24 +56,23 @@ class Kalman(object):
         return P
 
 
-    def predict(self, x, P):
+    def predict(self, x, t):
+        F = self.matrix_set[t]
         noise = np.random.randn(self.N, self.N)
         x_predict = np.dot(self.F_matrix[t], x) + self.noise_set[t]
-        P = self.make_covariance(x_predict, x)
-        F_trans = F.transpose()
-        P = np.dot(np.dot(F, P), F_trans) + noise
+        P = self.make_covariance(x, x.transpose())
+        P = np.dot(np.dot(F, P), F.transpose()) + noise
 
         return x_predict, P
 
 
     def update(self, x, t):
         y = self.obs_set[t]
-        e = y - predict(x, t)[0]
-        R = self.make_covariance(x, y)
-        #S = R + self.predict(x, P)[1]
-        #K = np.dot(P, S.transpose())
-        #x = x_predict + np.dot(K, e)
-        #P_next = np.dot((np.indetity(self.N)-K), P_predict)
+        e = y - np.dot(self.F_matrix[t], x)
+        S = self.R + self.predict(x, P)[1]
+        K = np.dot(P, S.transpose())
+        x = self.predict(x, t)[0] + np.dot(K, e)
+        P_next = np.dot((np.indetity(self.N)-K), P_predict)
 
 
     def load_data(self, Nth_data):

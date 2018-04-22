@@ -44,7 +44,7 @@ class Three_dimentional(object):
         x0_mean = x0.sum()/self.N
         x1_mean = x1.sum()/self.N
 
-        P = np.zeros(self.N, self.N)
+        P = np.zeros([self.N, self.N])
         for i in range(self.N):
             for j in range(self.N):
                 value = (x0[i] - x0_mean) * (x1[j] - x1_mean)
@@ -54,18 +54,18 @@ class Three_dimentional(object):
 
 
     def noise_variance(self):
-        noise_system = np.randn(self.N)
-        noise_observation = np.randn(self.N)
+        noise_system = np.random.randn(self.N)
+        noise_observation = np.random.randn(self.N)
         Q = self.make_covariance(noise_system, noise_system.transpose())
         R = self.make_covariance(noise_observation, noise_observation.transpose())
 
         return Q, R
 
-    def three_dimentional(self, x, t, A):
+    def three_d(self, x, t, A):
         # Predict
         F = self.matrix_set[t]
         noise = np.random.randn(self.N, self.N)
-        x_predict = np.dot(self.F_matrix[t], x) + self.noise_set[t]
+        x_predict = np.dot(self.matrix_set[t], x) + self.noise_set[t]
         P = self.make_covariance(x, x.transpose())
         P = np.dot(np.dot(F, P), F.transpose()) + self.noise_variance()[1]
         P += A
@@ -77,7 +77,7 @@ class Three_dimentional(object):
         S = R + P
         K = np.dot(P, S.transpose())
         x = x_predict + np.dot(K, e)
-        P_next = np.dot(np.indetity(self.N) - K, P)
+        P_next = np.dot(np.identity(self.N) - K, P)
 
         return x, P_next
 

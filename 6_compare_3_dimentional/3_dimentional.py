@@ -3,7 +3,7 @@ import numpy as np
 from lorenz96 import Lorenz96
 
 
-class Kalman(object):
+class Three_dimentional(object):
     def __init__(self, true_path="save_data/data", noise_path="noise_data/data"):
         self.file_num = 1460
         self.N = 40
@@ -61,13 +61,14 @@ class Kalman(object):
 
         return Q, R
 
-    def kalman_filter(self, x, t):
+    def three_dimentional(self, x, t, A):
         # Predict
         F = self.matrix_set[t]
         noise = np.random.randn(self.N, self.N)
         x_predict = np.dot(self.F_matrix[t], x) + self.noise_set[t]
         P = self.make_covariance(x, x.transpose())
         P = np.dot(np.dot(F, P), F.transpose()) + self.noise_variance()[1]
+        P += A
 
         # Update
         R = self.noise_variance()[1]
@@ -100,4 +101,4 @@ class Kalman(object):
 
 
 if __name__ == "__main__":
-    model = Kalman(true_path="save_data/data", noise_path="noise_data/data")
+    model = Three_dimentional(true_path="save_data/data", noise_path="noise_data/data")

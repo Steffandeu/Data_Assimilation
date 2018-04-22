@@ -47,7 +47,7 @@ class Three_dimentional(object):
         P = np.zeros(self.N, self.N)
         for i in range(self.N):
             for j in range(self.N):
-                value = (x0[i] - x0_mean) * (x1[j] - x0_mean)
+                value = (x0[i] - x0_mean) * (x1[j] - x1_mean)
                 P[i][j] = value
 
         return P

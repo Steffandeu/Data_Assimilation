@@ -10,34 +10,36 @@ class Three_dimentional(object):
         self.true_path = true_path
         self.noise_path = noise_path
         self.init_true, self.init_noise = self.load_data(0)
+        self.init_P = np.zeros([self.N, self.N])
         self.model = Lorenz96(N_dim=self.N, F=8, init_x=self.init_true)
 
-        # make data set
-        ## self.true_set : system trandition
-        ## self.obs_set : observation data
-        ## self.matrix_set : system trandition matrix
-        ## self.noise_set : system noise
-        data = self.load_data(0)
-        self.true_set = np.array([data[0]])
-        self.obs_set = np.array([data[1]])
 
-        for i in range(1, self.file_num):
-            data = self.load_data(i)
-            true = np.array([data[0]])
-            self.true_set = np.append(self.true_set, true, axis=0)
-            obs = np.array([data[1]])
-            self.obs_set = np.append(self.obs_set, obs, axis=0)
+    def predict(self, x, t, A):
+        # Predict
+        F = self.transition(t) # 40x40
+        noise = np.random.randn(self.N, 1) # 40x1
+        x_predict = np.dot(F, x.transpose()) + noise # 40x1
 
-        # compute system trandition matrix/noise
-        self.matrix_set = np.zeros([self.file_num-1, self.N, self.N])
-        self.noise_set = np.zeros([self.file_num-1, self.N])
+        error = x - self.load_data(t)[0] # 1x40
+        P = self.make_covariance(error.transpose(), error) # 40x40
+        P = np.dot(np.dot(F, P), F.transpose()) + np.random.randn(self.N, self.N)
+        P += A
 
-        for i in range(self.file_num-1):
-            self.noise_set[i] = np.random.randn(self.N)
-            x1 = np.array([self.true_set[i+1]])
-            x0 = np.array([self.true_set[i]])
-            x0_inv = np.linalg.pinv(x0)
-            self.matrix_set[i] = np.dot(x0_inv, x1-self.noise_set[i])
+        return x_predict.transpose(), P
+
+
+    def update(self, x, t):
+        # Update
+        x_predict, P_predict = self.predict(x, t)
+        x, y = self.load_data(t)
+        e = y - x_predict # 1x40
+        S = np.random.randn(self.N, self.N) + P_predict # 40x40
+        K = np.dot(P_predict, np.linalg.inv(S)) # 40x40
+        x = x_predict + np.dot(K, e.transpose()) # 40x1
+        P_next = np.dot(np.identity(self.N) - K, P_predict)
+
+        return x.transpose(), P_next
+
 
 
     def make_covariance(self, x0, x1):
@@ -47,7 +49,7 @@ class Three_dimentional(object):
         P = np.zeros([self.N, self.N])
         for i in range(self.N):
             for j in range(self.N):
-                value = (x0[i] - x0_mean) * (x1[j] - x1_mean)
+                value = (x0[i][0] - x0_mean) * (x1[0][i] - x1_mean)
                 P[i][j] = value
 
         return P
@@ -60,26 +62,6 @@ class Three_dimentional(object):
         R = self.make_covariance(noise_observation, noise_observation.transpose())
 
         return Q, R
-
-    def three_d(self, x, t, A):
-        # Predict
-        F = self.matrix_set[t]
-        noise = np.random.randn(self.N, self.N)
-        x_predict = np.dot(self.matrix_set[t], x) + self.noise_set[t]
-        P = self.make_covariance(x, x.transpose())
-        P = np.dot(np.dot(F, P), F.transpose()) + self.noise_variance()[1]
-        P += A
-
-        # Update
-        R = self.noise_variance()[1]
-        y = self.obs_set[t]
-        e = y - x_predict
-        S = R + P
-        K = np.dot(P, S.transpose())
-        x = x_predict + np.dot(K, e)
-        P_next = np.dot(np.identity(self.N) - K, P)
-
-        return x, P_next
 
 
     def load_data(self, Nth_data):
@@ -95,8 +77,17 @@ class Three_dimentional(object):
             observed = g.readlines()
             observed = np.array([observed]).astype(float)
 
-        return true[0], observed[0]
+        return np.array([true[0]]), np.array([observed[0]])
 
+
+    def transition(self, Nth):
+        # compute system trandition matrix/noise
+        data, obs_data = self.load_data(Nth)
+        data_next, obs_next = self.load_data(Nth+1)
+
+        matrix = np.dot(data_next.transpose(), np.linalg.pinv(data.transpose()))
+
+        return matrix
 
 
 

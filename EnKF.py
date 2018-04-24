@@ -4,9 +4,10 @@ from lorenz96 import Lorenz96
 
 
 class EnsembleKalman(object):
-    def __init__(self, true_path="make_data/true_value/data", noise_path="make_data/observation_data/data"):
+    def __init__(self, true_path="make_data/true_value/data",
+                        noise_path="make_data/observation_data/data"):
         self.file_num = 1460
-        self.dt = 0.05
+        self.dt = 0.05   # 6 hours
         self.N = 40
         self.true_path = true_path
         self.noise_path = noise_path
@@ -23,7 +24,6 @@ class EnsembleKalman(object):
         # Make ensemble
         ensemble = np.tile(x, (self.ensemble_num, 1))
         ensemble += self.ensemble_sigma * np.random.randn(self.N, self.ensemble_num).transpose()
-        print(ensemble.shape)
 
         for i in range(self.ensemble_num):
             ensemble[i] = x + self.model._lorenz(ensemble[i], t) * self.dt
@@ -31,28 +31,33 @@ class EnsembleKalman(object):
         return ensemble
 
 
-    def EnKF_filter(self, x, t):
-        # filter
-        x_predict = self.EnKF_predict(x, t)
-        x_filter = x_predict - x_predict.mean()
+    def EnKF_update(self, x, t):
+        # update
+        true, obs = self.load_data(t)
+        # Make ensemble
+        ensemble = np.tile(x, (self.ensemble_num, 1))
+        ensemble += self.ensemble_sigma * np.random.randn(self.N, self.ensemble_num).transpose()
 
-        ensemble = EnKF_predict(x, t)
-
-        V = np.zeros([self.N, self.N])
+        # error covariance
+        ensemble_x = ensemble # keep the same shape
         for i in range(self.ensemble_num):
-            V += self.make_covariance(ensemble[i].transpose(), ensemble[i])
-        V /= (self.ensemble_num - 1)
+            ensemble_x[i] = ensemble[i] - ensemble[i].mean()
 
-        R = np.random.randn(self.N, self.N)
-        K = np.dot(V, np.linalg.inv(V + R))
+        # error of output covariance
+        ensemble = ensemble + np.random.randn(self.ensemble_num, self.ensemble_num) * self.ensemble_sigma
+        for i in range(self.ensemble_num):
+            ensemble_y[i] = ensemble[i] - ensemble[i].mean()
+
+        U = np.dot(ensemble_x, ensemble_x.transpose()) / (self.ensemble_num - 1)
+        V = np.dot(ensemble_y, ensemble_y.transpose()) / (self.ensemble_num - 1)
+
+        H = np.dot(U, np.linalg.inv(V))
 
         for i in range(self.ensemble_num):
-            #ensemble[i] = x + self.model._lorenz(ensemble[i], t) * self.dt
+            err = obs - ensemble_y[i]
+            ensemble[i] = ensemble_x[i] + np.dot(H, err.transpose()).transpose()
 
-
-    #def EnKF_smooth(self):
-        # smooth
-
+        return ensemble
 
 
     def make_covariance(self, x0, x1):
@@ -118,7 +123,7 @@ class EnsembleKalman(object):
 
 
 if __name__ == "__main__":
-    model = EnsembleKalman(true_path="save_data/data", noise_path="noise_data/data")
+    model = EnsembleKalman(true_path="make_data/true_value/data",noise_path="make_data/observation_data/data")
 
     x = np.random.randn(1, model.N)
-    print(model.EnKF_predict(x, 30).shape)
+    print(model.EnKF_predict(x, 30)[4].shape)

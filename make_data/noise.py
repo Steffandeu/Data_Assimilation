@@ -34,5 +34,3 @@ if __name__ == "__main__":
         filename = new_dir_path+"/data"+str(i)+".dat"
         np.savetxt(filename, value)
 
-    print(data)
-    print(value - data)

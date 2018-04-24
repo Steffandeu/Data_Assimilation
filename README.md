@@ -18,7 +18,7 @@ You can install `matplotlib` and `numpy` by following below command.
 For implementation of this, you can choose whether to save image.
 if you want to save image, you can do it by following below.
 
-`python main.py -s`
+`python plot.py -s`
 
 ## Author
 GitHub account

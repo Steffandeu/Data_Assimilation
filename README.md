@@ -10,7 +10,7 @@ Later I will implement 4 dimentional variational method.
 ![look9](images/Lorenz_F_9.png)
 
 ## Evaluate 
-![look8](images/Loren_error_1e-15.png)
+![look8](images/Lorenz_error_1e-15.png)
 ![look9](images/Error_difference.png)
 
 ## Requirement
@@ -32,6 +32,9 @@ First, you have to make true value.
 Follow below.
 
 `cd make_data`
+
+change directory. Next, implement.
+
 `python save_data.py`
 
 To get observation data, next command you have to implement is below.

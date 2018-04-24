@@ -5,7 +5,8 @@ import numpy as np
 file_num = 1460
 N_dim = 40
 
-new_dir_path = "noise_data/"
+value_dir = "true_value/"
+new_dir_path = "observation_data/"
 
 
 if __name__ == "__main__":
@@ -19,7 +20,7 @@ if __name__ == "__main__":
 
         noise = np.random.randn(N_dim)
 
-        with open("save_data/"+filename, "r") as f:
+        with open(value_dir+filename, "r") as f:
             raw = f.readlines()
 
         # Raw data process

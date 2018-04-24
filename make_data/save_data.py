@@ -21,7 +21,7 @@ x[N_dim-1] += 0.01
 
 model = Lorenz96(N_dim=N_dim, F=F, init_x=x)
 
-new_dir_path = "save_data"
+new_dir_path = "true_value"
 
 if __name__ == '__main__':
 

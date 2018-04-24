@@ -4,7 +4,7 @@ from lorenz96 import Lorenz96
 
 
 class EnsembleKalman(object):
-    def __init__(self, true_path="save_data/data", noise_path="noise_data/data"):
+    def __init__(self, true_path="make_data/true_value/data", noise_path="make_data/observation_data/data"):
         self.file_num = 1460
         self.dt = 0.05
         self.N = 40

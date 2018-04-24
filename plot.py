@@ -52,7 +52,7 @@ if __name__ == "__main__":
     ax.set_zlabel('$x_3$')
 
     if args.Save:
-        filename = "Lorenz_F_"+str(F)+".png"
+        filename = "images/Lorenz_F_"+str(F)+".png"
         plt.savefig(filename)
 
     plt.show()

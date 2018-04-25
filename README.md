@@ -35,7 +35,7 @@ Follow below.
 
 change directory. Next, implement.
 
-`python save_data.py`
+`python make_true_value.py`
 
 To get observation data, next command you have to implement is below.
 

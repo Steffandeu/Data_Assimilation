@@ -95,6 +95,7 @@ if __name__ == "__main__":
 
     x = np.random.randn(1, model.N)
     print(x.transpose().shape)
+    
 
     print(model.KF_predict(x, 10))
     print()

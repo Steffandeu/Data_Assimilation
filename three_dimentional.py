@@ -20,7 +20,7 @@ class Three_dimentional(object):
         noise = np.random.randn(self.N, 1) # 40x1
         x_predict = np.dot(F, x.transpose()) + noise # 40x1
 
-        error = x - self.load_data(t)[0] # 1x40
+        error = x - self.load_data(t+1)[0] # 1x40
         P = self.make_covariance(error.transpose(), error) # 40x40
         P = np.dot(np.dot(F, P), F.transpose()) + np.random.randn(self.N, self.N)
         P += A
@@ -92,4 +92,4 @@ class Three_dimentional(object):
 
 
 if __name__ == "__main__":
-    model = Three_dimentional(true_path="save_data/data", noise_path="noise_data/data")
+    model = Three_dimentional()

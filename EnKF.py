@@ -7,8 +7,8 @@ class EnsembleKalman(object):
     def __init__(self, true_path="make_data/true_value/data",
                         noise_path="make_data/observation_data/data"):
         self.file_num = 1460
-        self.dt = 0.05   # 6 hours
-        self.N = 40
+        self.dt = 0.05    # 6 hours
+        self.N = 40   # dimentions
         self.true_path = true_path
         self.noise_path = noise_path
         self.init_true, self.init_noise = self.load_data(0)

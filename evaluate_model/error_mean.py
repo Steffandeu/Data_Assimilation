@@ -8,7 +8,7 @@ import argparse
 from lorenz96 import Lorenz96
 
 
-# Set initial data for this model
+# Set initial data for this models
 N_dim = 40   # How many dimentions
 F = 8        # Set the parameter of this model
 t_end = 2    # How long to set time length

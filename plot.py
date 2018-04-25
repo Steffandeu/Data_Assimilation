@@ -12,7 +12,7 @@ from lorenz96 import Lorenz96
 N_dim = 40   # How many dimentions
 F = 8        # Set the parameter of this model
 t_end = 30   # How long to set time length
-dt = 0.01     # time step
+dt = 0.01    # time step
 
 parser = argparse.ArgumentParser(
                     prog="whether to save image",

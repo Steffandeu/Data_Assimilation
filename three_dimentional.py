@@ -6,7 +6,7 @@ from lorenz96 import Lorenz96
 class Three_dimentional(object):
     def __init__(self, true_path="make_data/true_value/data", noise_path="make_data/observation_data/data"):
         self.file_num = 1460
-        self.N = 40
+        self.N = 40  # dimention
         self.true_path = true_path
         self.noise_path = noise_path
         self.init_true, self.init_noise = self.load_data(0)

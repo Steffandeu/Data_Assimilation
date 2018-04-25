@@ -63,13 +63,17 @@ class Analyze(object):
         return buffer
 
 
-    def show_image(self, x):
+    def show_image(self, x, save=False):
         # plot error growth
         t = np.arange(0, self.t_end+self.dt, self.dt)
         plt.plot(t, x[:len(t)])
         plt.title('F={} T={}, dt={}'.format(self.F, self.t_end, self.dt))
         plt.tick_params(labelsize = 8)
         #plt.xticks(np.arange(0, self.t_end+self.dt, 0.2))
+
+        if save:
+            plt.save(filename = "images/Lorenz_F_"+str(F)+".png")
+            plt.savefig(filename)
 
         plt.show()
 
@@ -79,10 +83,16 @@ class Analyze(object):
         t = np.arange(0, self.t_end+self.dt, self.dt)
 
         ims = []
-        for a in range(50):
-            y = np.sin(x - a)
-            line, = plt.plot(x, y, "r")
-            ims.append([line])
+
+        ######## Process #######
+        ########################
+        ## Show example below ##
+        #x = np.arange(0,10,0.1)
+        #for a in range(50):
+        #    y = np.sin(x - a)
+        #    line, = plt.plot(x, y, "r")
+        #    ims.append([line])
+        ########################
 
         ani = animation.ArtistAnimation(fig, ims)
         ani.save('anim.gif', writer="imagemagick")

@@ -39,7 +39,7 @@ class Lorenz96(object):
             q2 = self._lorenz(x + (dt * q1)/2.0, t + dt/2.0)
             q3 = self._lorenz(x + (dt * q2)/2.0, t + dt/2.0)
             q4 = self._lorenz(x + (dt * q3), t + dt)
-            k = dt * (q1 + q2 + q3 + q4) / 6.0
+            k = dt * (q1 + 2.0 * q2 + 2.0 * q3 + q4) / 6.0
             x += k
             x_buffer = np.append(x_buffer, np.array([x]), axis=0)
             t += dt

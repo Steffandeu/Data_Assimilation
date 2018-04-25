@@ -91,7 +91,7 @@ class Kalman(object):
 
 
 if __name__ == "__main__":
-    model = Kalman(true_path="save_data/data", noise_path="noise_data/data")
+    model = Kalman(true_path="make_data/true_value/data", noise_path="make_data/observation_data/data")
 
     x = np.random.randn(1, model.N)
     print(x.transpose().shape)

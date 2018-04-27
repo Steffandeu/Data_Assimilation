@@ -46,9 +46,6 @@ class Analyze(object):
         for j in range(self.noise_sample_num):
             # Initialize noise
             x = init_x + self.initialize_noise()
-            print(init_x-x)
-            print(x)
-            print(init_x)
             model = Lorenz96(N_dim=self.N, F=self.F, init_x=x)
             # Check error development
             value = model.Runge_Kutta_4(dt=self.dt, t_end=self.t_end)

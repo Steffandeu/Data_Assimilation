@@ -9,8 +9,8 @@ class Analyze(object):
         self.F = F
         self.N = 40
         self.dt = 0.01
-        self.t_end = 4
-        self.x_sigma = 1e-10
+        self.t_end = 6
+        self.x_sigma = 1e-5
         self.noise_sigma = 1e-10
         self.sample_num = 15
         self.noise_sample_num = 32
@@ -61,7 +61,7 @@ class Analyze(object):
         return buffer
 
 
-    def make_contour(self):
+    def make_contour(self, save=False):
         t_num = int(self.t_end/self.dt + self.dt)
         t = np.arange(0, t_num, self.dt)
         init_x = self.initialize_x()
@@ -72,13 +72,16 @@ class Analyze(object):
         # x : x[t,N]
         x_dim = np.arange(0, self.N, float(1.0/(self.N ** (self.contour_frac-1))))
         x_num = int(self.N ** self.contour_frac)
-        #x_buffer = np.tile(value.transpose(), x_num)
+        print(value)
 
         # Plot
-        plt.contour(value.transpose())
+        plt.contour(value)
+
+        if save:
+            filename = "contour.png"
+            plt.savefig(filename)
+
         plt.show()
-
-
 
 
     def show_image(self, x, save=False):
@@ -90,7 +93,7 @@ class Analyze(object):
         #plt.xticks(np.arange(0, self.t_end+self.dt, 0.2))
 
         if save:
-            plt.save(filename = "images/Lorenz_F_"+str(F)+".png")
+            filename = "images/Lorenz_F_"+str(F)+".png"
             plt.savefig(filename)
 
         plt.show()

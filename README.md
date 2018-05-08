@@ -9,9 +9,9 @@ Later I will implement 4 dimentional variational method.
 ![look8](images/Lorenz_F_8.png)
 ![look9](images/Lorenz_F_9.png)
 
-## Evaluate 
-![look8](images/Lorenz_error_1e-15.png)
-![look9](images/Error_difference.png)
+## Evaluate
+![look9](images/kalman_50.png)
+![look8](images/error_in_assimilation.png)
 
 ## Requirement
 This module needs `matplotlib` and `numpy`.

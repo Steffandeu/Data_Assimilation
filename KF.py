@@ -4,61 +4,52 @@ from lorenz96 import Lorenz96
 
 
 class Kalman(object):
-    def __init__(self, true_path="make_data/true_value/data", noise_path="make_data/observation_data/data"):
+    def __init__(self, true_path="make_data/true_value/data",
+                 noise_path="make_data/observation_data/data"):
         self.file_num = 1460
         self.N = 40   # dimention
+        self.dt = 10e-2 # 6 hours
         self.true_path = true_path
         self.noise_path = noise_path
-        self.init_true, self.init_noise = self.load_data(0)
-        self.init_P = np.zeros([self.N, self.N])
-        self.model = Lorenz96(N_dim=self.N, F=8, init_x=self.init_true)
+        self.Q = np.identity(self.N)
+        self.R = np.identity(self.N)
+        data, _ = self.load_data(0)
+        self.model = Lorenz96(N_dim=self.N, F=8, init_x=data)
 
 
-    def KF_predict(self, x, t):
-        # Predict
-        F = self.transition(t) # 40x40
-        noise = np.random.randn(self.N, 1) # 40x1
-        x_predict = np.dot(F, x.transpose()) + noise # 40x1
+    def predict(self, x_a, P_a, t):
+        # input : x -> 1x40
+        #         P -> 40x40
+        dx = self.model._lorenz(x_a[0], t)
+        dx = np.array([dx])
+        F = np.identity(len(x_a[0]))
+        G = np.identity(len(x_a[0]))
+        #print("\n\ndx : \n",0.01*dx,"\n\n")
+        x_f = F.dot(x_a.transpose()).transpose() + self.dt * dx
+        noise = G.dot(self.Q).dot(G.transpose())
+        P_f = F.dot(P_a).dot(F.transpose()) + noise
 
-        error = x - self.load_data(t)[0] # 1x40
-        P = self.make_covariance(error.transpose(), error) # 40x40
-        P = np.dot(np.dot(F, P), F.transpose()) + np.random.randn(self.N, self.N)
-
-        return x_predict.transpose(), P
-
-
-    def KF_update(self, x, t):
-        # Update
-        x_predict, P_predict = self.KF_predict(x, t)
-        x, y = self.load_data(t)
-        e = y - x_predict # 1x40
-        S = np.random.randn(self.N, self.N) + P_predict # 40x40
-        K = np.dot(P_predict, np.linalg.inv(S)) # 40x40
-        x = x_predict + np.dot(K, e.transpose()) # 40x1
-        P_next = np.dot(np.identity(self.N) - K, P_predict)
-
-        return x.transpose(), P_next
+        return x_f, P_f
 
 
+    def update(self, x_f, P_f, t):
+        H = np.identity(self.N) # 40x40
+        I = np.identity(self.N)
+        y = self.load_data(t)[1] # 1x40
+        e = y - H.dot(x_f.transpose()).transpose()
+        S = self.R + H.dot(P_f).dot(H.transpose())
+        K = P_f.dot(H.transpose()).dot(np.linalg.inv(S))
+        x_a = x_f + K.dot(e.transpose()).transpose()
+        P_a = (I - K.dot(H)).dot(P_f)
 
-    def make_covariance(self, x0, x1):
-        x0_mean = x0.sum()/self.N
-        x1_mean = x1.sum()/self.N
-
-        P = np.zeros([self.N, self.N])
-        for i in range(self.N):
-            for j in range(self.N):
-                value = (x0[i][0] - x0_mean) * (x1[0][i] - x1_mean)
-                P[i][j] = value
-
-        return P
+        return x_a, P_a
 
 
     def noise_variance(self):
-        noise_system = np.random.randn(self.N)
-        noise_observation = np.random.randn(self.N)
-        Q = self.make_covariance(noise_system, noise_system.transpose())
-        R = self.make_covariance(noise_observation, noise_observation.transpose())
+        q_noise = np.random.randn(self.N)
+        r_noise = np.random.randn(self.N)
+        q_mean = q_noise.mean()
+        r_mean = r_noise.mean()
 
         return Q, R
 
@@ -79,24 +70,14 @@ class Kalman(object):
         return np.array([true[0]]), np.array([observed[0]])
 
 
-    def transition(self, Nth):
-        # compute system trandition matrix/noise
-        data, obs_data = self.load_data(Nth)
-        data_next, obs_next = self.load_data(Nth+1)
-
-        matrix = np.dot(data_next.transpose(), np.linalg.pinv(data.transpose()))
-
-        return matrix
-
-
 
 if __name__ == "__main__":
     model = Kalman(true_path="make_data/true_value/data", noise_path="make_data/observation_data/data")
 
     x = np.random.randn(1, model.N)
+    P = np.random.randn(model.N, model.N)
     print(x.transpose().shape)
-    
+    print("predict x : ", model.predict(x, P, 10)[0].shape)
+    print("update x : ", model.update(x, P, 10)[0].shape)
 
-    print(model.KF_predict(x, 10))
-    print()
-    print(model.KF_update(x, 10))
+    print("load data : ",model.load_data(4)[0].shape)
